@@ -1,7 +1,27 @@
 import React from 'react';
-import Routes from './navigation/Routes';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import ForgetPasswordScree from './screens/ForgetPasswordScree';
+import AppStack from './navigation/AppStack';
+import GroupDetails from './screens/GroupDetails';
+import NotificationScreen from './screens/NotificationScreen';
 
+
+const Stack = createStackNavigator();
 export default function App() {
-  return <Routes />;
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Appstack" screenOptions={{headerShown: false}}>
+        <Stack.Screen name={"Login"} component={LoginScreen} />
+        <Stack.Screen name={"Signup"} component={SignUpScreen} />
+        <Stack.Screen name={"Forgetpassword"} component={ForgetPasswordScree} />
+        <Stack.Screen name={"Appstack"} component={AppStack} />
+        <Stack.Screen name={"Groupdetails"} component={GroupDetails} />
+        <Stack.Screen name={"Notifications"} component={NotificationScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
 

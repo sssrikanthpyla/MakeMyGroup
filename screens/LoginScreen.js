@@ -1,191 +1,239 @@
-import React from 'react';
-import { StyleSheet, Button, TouchableOpacity, StatusBar, Text, View,SafeAreaView, Dimensions } from 'react-native';
-// import useStatusBar from '../hooks/useStatusBar';
-import { isUserLoggedIn } from '../constants/userDetails';
-// import { Input } from 'react-native-elements';
-import { TextInput } from 'react-native-paper';
-import { Divider, Input } from 'react-native-elements';
+import React, { useState } from 'react';
+import { View, Text, SafeAreaView, TextInput, Pressable, Button, Dimensions, StyleSheet } from 'react-native';
+import { Formik } from 'formik';
+import * as yup from 'yup';
 
+
+const LogInValidationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Please enter valid email")
+      .required('Email Address is Required'),
+    password: yup
+      .string()
+      .min(8, ({ min }) => `Password must be at least ${min} characters`)
+      .required('Password is required'),
+  });
+
+  
 const window = Dimensions.get('window');
-const screen = Dimensions.get('screen');
-export default function LoginScreen({ navigation }) {
-    // useStatusBar('dark-content');
-// alert(window['width']*4.37/100);
-    return (
-        <SafeAreaView style={styles.container} >
-            {/* <StatusBar
-                animated={true}
-                backgroundColor="#ED722E"
-                // barStyle={statusBarStyle}
-                // showHideTransition={statusBarTransition}
-                // hidden={hidden}
-                 /> */}
-            <Text style={styles.welcome}>Welcome</Text>
-            <Text style={styles.logInText}>Log In</Text>
-            <View style={styles.logInContent}>
-            <Text style={styles.email}>Email</Text>
-            <View style={styles.emailplaceholder}>
-            <Input
-                placeholder = "Enter email"
-            />
-            </View>
-            <Text style={styles.password}>Password</Text>
-            <View style={styles.passwordplaceholder}>
-            <Input
-                placeholder = "Enter email"
-            />
-            </View>
-            <View style={styles.button}>
-            <Button
-                onPress={validation}
-                title="Log In"
-                color="#ED722E"
-                // accessibilityLabel="Learn more about this purple button"
-                />
-            </View>
-            </View>
-        </SafeAreaView>
-    );
-}
-
-function validation(){
-    if(isUserLoggedIn){
-        navigation.navigate('Home');
+export default function SignUpScreen({navigation}) {
+    const validateUserDetails = () => {
+        navigation.navigate('Appstack');
     }
+    return(
+        <SafeAreaView style={styles.container}>
+            <Text style={styles.welcome}>Welcome</Text>
+            <Text style={styles.loginTitle}>Log In</Text>
+            <SafeAreaView style={styles.subContainer}>
+            <Formik
+                    validationSchema={LogInValidationSchema}
+                    initialValues={{ email: '', password: '' }}
+                    onSubmit={validateUserDetails}
+                    >
+                    {({
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        values,
+                        errors,
+                        touched,
+                        isValid,
+                    }) => (
+                        <>
+                        <Text style={styles.emailText}>Email</Text>
+                        <TextInput
+                            style={styles.emailPlaceholder}
+                            placeholder="Example@gmail.com"
+                            onChangeText={handleChange('email')}
+                            onBlur={handleBlur('email')}
+                            value={values.email}
+                            keyboardType="email-address"
+                        />
+                        <View style={styles.errorEmail}>
+                        {(errors.email && touched.email) &&
+                            <Text style={{ fontSize: 10, color: 'red' }}>{errors.email}</Text>
+                        }
+                        </View>
+                        <Text style={styles.passwordText}>Password</Text>
+                        <TextInput
+                            style={styles.passwordPlaceholder}
+                            placeholder=" Enter Password"
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur('password')}
+                            value={values.password}
+                            secureTextEntry
+                        />
+                        <View style={styles.errorPassword}>
+                        {(errors.password && touched.password) &&
+                            <Text style={{ fontSize: 10, color: 'red' }}>{errors.password}</Text>
+                        }
+                        </View>
+                        <Text style={styles.forgotPassword}>Forgot Password</Text>
+                        <View style={styles.loginButton}>
+                        <Button
+                            color='#ED722E'
+                            onPress={handleSubmit}
+                            title="Log In"
+                            disabled={!isValid}
+                        />
+                        </View>
+                            <Text style={styles.dontAccout}>Don't have an account?</Text>
+                            <Text style={styles.signupText} onPress={()=>navigation.navigate('Signup')}>Sign Up</Text>
+                        </>
+                    )}
+                    </Formik>
+            </SafeAreaView>
+        </SafeAreaView>
+    )
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: screen['width'],
-        height: screen['height'],
-        left: 0,
-        // top: window['height']*13.16/100,
-        backgroundColor: '#ED722E'
-    },
-    common: {
-
+        // flex: 1,
+        width: 414,
+        height: 896,
+        backgroundColor: '#ED722E',
+        // color: '#ED722E',
     },
     welcome: {
         position: 'absolute',
-        // width: window['width']*(19.32/100),
-        // height: window['height']*2.455/100,
-        // left: window['width']*9.66/100,
-        left: window['width']*50/100-88/2 - 123,
-        top: window['height']*14.28/100,
-        // font-family: Inter;
-        fontStyle: 'normal',
-        fontWeight: "500",
-        fontSize: 18,
-        lineHeight: 22,
-        textAlign: 'center',
-        color: '#FFFFFF'
+        top: 128,
+        left: 40,
+        fontStyle:'normal',
+        fontSize:18,
+        lineHeight:22,
+        fontWeight:'500',
+        color:"rgba(255,255,255,0.7)"
     },
-    logInText: {
+    loginTitle: {
         position: 'absolute',
-        // width: window['width']*21.25/100,
-        // height: window['height']*5.5/100,
-        left: window['width']*50/100-88/2 - 123,
-        top: window['height']*18.41/100,
-        // font-family: Inter;
-        fontStyle: 'normal',
-        fontWeight: "600",
-        fontSize: 30,
-        lineHeight: 36,
-        textAlign: 'center',
-        color: '#FFFFFF'
+        left: 40,
+        top: 165,
+        fontStyle:'normal',
+        fontSize:30,
+        lineHeight:36,
+        fontWeight:'600',
+        color:"rgba(255,255,255,0.7)"
     },
-    logInContent: {
-        position: 'absolute',
-        width: window['width'],
-        height: window['height']*59.15/100,
-        left: 0,
-        top: window['height']*31.80/100,
+    subContainer: {
+        top: 285,
+        width: 414,
+        height: 530,
         backgroundColor: '#FFFFFF',
-        // borderRadius: 50,
-        borderTopEndRadius: 50,
-        borderTopStartRadius: 50
+        borderTopLeftRadius: 50,
+        borderTopRightRadius: 50,
     },
-    email:{
+    emailText: {
         position: 'absolute',
-        width: 53,
-        height: 24,
-        left: window['width']*9.17/100,
-        top: window['height']*7.9/100,
-        // font-family: Inter;
-        fontStyle: 'normal',
-        fontWeight: "600",
-        fontSize: 20,
-        lineHeight: 24,
-        textAlign: 'center',
-        color: '#000000',
-        alignItems:'flex-end',
-        display:'flex'
+        top: 71,
+        left: 38,
+        fontStyle:'normal',
+        fontSize:20,
+        lineHeight:24,
+        fontWeight:'600',
+        color:'#000000',
+        // disply:"flex"
 
     },
-    emailplaceholder:{
-        // position: 'absolute',
-        // width: window['width'],
-        height: window['height']*5.5/100,
-        left: window['width']*8/100,
-        top: window['height']*13.16/100,
-        // font-family: Inter;
-        fontStyle: 'normal',
-        fontWeight: "500",
-        fontSize: 16,
-        lineHeight: 19,
-        // textAlign: 'center',
-        color: '#FFFFFF',
-        // backgroundColor:'#FFFFFF',
-        // alignItems:'flex-end',
-        display:'flex'
-
-    },
-    password:{
+    emailPlaceholder: {
         position: 'absolute',
-        // width: window['width']*21.25/100,
-        height: window['height']*2.75/100,
-        left: window['width']*9.17/100,
-        top: window['height']*21.42/100,
-        // font-family: Inter;
-        fontStyle: 'normal',
-        fontWeight: "500",
-        fontSize: 16,
-        lineHeight: 19,
-        textAlign: 'center',
-        color: '#000000',
-        alignItems:'flex-end',
-        display:'flex'
+        left: 38,
+        top: 118,
+        width: 360,
+        fontStyle:'normal',
+        fontSize:16,
+        lineHeight:19,
+        fontWeight:'500',
+        color:"rgba(0,0,0,0.5)"
     },
-    passwordplaceholder:{
-        // position: 'absolute',
-        // width: window['width'],
-        height: window['height']*5.5/100,
-        left: window['width']*8/100,
-        top: window['height']*21.16/100,
-        // font-family: Inter;
-        fontStyle: 'normal',
-        fontWeight: "500",
-        fontSize: 16,
-        lineHeight: 19,
-        // textAlign: 'center',
-        color: '#FFFFFF',
-        // backgroundColor:'#FFFFFF',
-        // alignItems:'flex-end',
-        display:'flex'
-
-    },
-    line:{
-        borderColor:'blue',
-        position:'absolute',
-        top:window['height']*30 /100
-    },
-    button: {
+    errorEmail: {
         position: 'absolute',
-        width: window['width']*83.57/100,
+        top: 140,
+        left: 38,
+    },
+    passwordText: {
+        position: 'absolute',
+        left: 38,
+        top: 192,
+        fontStyle:'normal',
+        fontSize:20,
+        lineHeight:24,
+        fontWeight:'600',
+        color:'#000000',
+        // disply:"flex"
+    },
+    passwordPlaceholder: {
+        position: 'absolute',
+        left: 38,
+        top: 239,
+        width: 360,
+        fontStyle:'normal',
+        fontSize:16,
+        lineHeight:19,
+        fontWeight:'500',
+        color:'#000000',
+        // disply:"flex"
+    },
+    errorPassword: {
+        position: 'absolute',
+        top: 265,
+        left: 38,
+    },
+    forgotPassword: {
+        position: 'absolute',
+        left: 38,
+        top: 306,
+        fontStyle:'normal',
+        fontSize:16,
+        lineHeight:19,
+        fontWeight:'500',
+        color:'rgba(58,59,61,0.72)',
+        
+    },
+    loginButton: {
+        position: 'absolute',
+        left: 38,
+        top: 371,
         height: 50,
-        left: window['width']*8/100,
-        top: window['height']*41.4/100,
-        borderRadius: 5
-    } 
-
-});
+        width: 360,
+    },
+    Button: {
+        width: 360,
+        backgroundColor: '#ED722E'
+    },
+    loginText: {
+        position: 'absolute',
+        left: 346,
+        top: 10,
+        color: '#FFFFFF',
+        fontStyle:'normal',
+        fontSize:16,
+        lineHeight:19,
+        fontWeight:'600',
+        color:'#FFFFFF',
+        // disply:"flex"
+    },
+    dontAccout: {
+        position: 'absolute',
+        left: 73,
+        top: 484,
+        fontStyle:'normal',
+        fontSize:16,
+        lineHeight:19,
+        fontWeight:'600',
+        color:'rgba(0,0,0,0.52)',
+        
+    },
+    signupText: {
+        position: 'absolute',
+        left: 263,
+        top: 484,
+        fontStyle:'normal',
+        fontSize:18,
+        lineHeight:22,
+        fontWeight:'bold',
+        color:'#ED722E',
+        // disply:"flex"
+    }
+})
